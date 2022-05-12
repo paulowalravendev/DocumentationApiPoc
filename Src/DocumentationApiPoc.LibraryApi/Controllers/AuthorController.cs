@@ -12,6 +12,15 @@ public class AuthorController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<GetAuthorsViewModel>>> GetAuthors() => 
+    public async Task<ActionResult<IEnumerable<GetAuthorsViewModel?>>> GetAuthors() => 
         Ok(await _sender.Send(new GetAuthorsQuery()));
+
+    [HttpGet("{authorId:guid}")]
+    public async Task<ActionResult<GetAuthorsViewModel?>> GetAuthor(Guid authorId)
+    {
+        var result = await _sender.Send(new GetAuthorQuery { AuthorId = authorId });
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
 }
